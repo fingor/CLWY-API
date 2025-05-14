@@ -2,11 +2,11 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 const logger = require("morgan");
+require("dotenv").config(); // 加载环境变量(注意dotenv引用的位置，一定要在自定义的两个中间件和其他路由上面。因为在这两个中间件里，也使用了环境变量)
 // 中间件
 const adminAuth = require("./middlewares/admin-auth");
 const userAuth = require("./middlewares/user-auth");
 const cors = require("cors");
-require("dotenv").config(); // 加载环境变量
 // 前台路由文件
 var indexRouter = require("./routes/index");
 var categoriesRouter = require("./routes/categories");
