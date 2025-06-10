@@ -37,7 +37,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors()); // CORS 跨域配置
+// app.use(cors()); // CORS 跨域配置
 // 前台路由
 app.use("/", indexRouter);
 app.use("/categories", categoriesRouter);

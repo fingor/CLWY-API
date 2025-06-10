@@ -55,7 +55,7 @@ router.post("/sign_in", async function (req, res) {
       process.env.SECRET,
       { expiresIn: "30d" }
     );
-    success(res, "登录成功。", { token });
+    success(res, "后台登录成功。", { token });
   } catch (error) {
     failure(res, error);
   }
