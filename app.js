@@ -55,7 +55,7 @@ app.use("/posts", postsRouter);
 app.use("/admin/articles", adminAuth, adminArticlesRouter);
 app.use("/admin/categories", adminAuth, adminCategoriesRouter);
 app.use("/admin/settings", adminAuth, adminSettingsRouter);
-app.use("/admin/users", adminUsersRouter);
+app.use("/admin/users",adminAuth, adminUsersRouter);
 app.use("/admin/courses", adminAuth, adminCoursesRouter);
 app.use("/admin/chapters", adminAuth, adminChaptersRouter);
 app.use("/admin/charts", adminAuth, adminChartsRouter);

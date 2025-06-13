@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { User } = require("../../models");
 const { Op } = require("sequelize");
-const { NotFoundError } = require('../../utils/errors');
-const { success, failure } = require('../../utils/responses');
+const { NotFoundError } = require("../../utils/errors");
+const { success, failure } = require("../../utils/responses");
 
 /**
  * 查询用户列表
@@ -17,31 +17,29 @@ router.get("/", async function (req, res) {
     const offset = (currentPage - 1) * pageSize;
 
     const condition = {
+      where: {},
       order: [["id", "DESC"]],
       limit: pageSize,
       offset: offset,
-      where: {}, // ✅ 初始化 where 为空对象
     };
 
-    // 合并所有查询条件
     if (query.email) {
-      condition.where.email = { [Op.eq]: query.email };
+      // condition.where.email = { [Op.eq]: query.email };//稍显繁琐
+      condition.where.email = query.email;
     }
 
     if (query.username) {
-      condition.where.username = { [Op.eq]: query.username };
+      condition.where.username = query.username;
     }
 
     if (query.nickname) {
-      condition.where.nickname = { [Op.like]: `%${query.nickname}%` };
+      condition.where.nickname = {
+        [Op.like]: `%${query.nickname}%`,
+      };
     }
 
     if (query.role) {
-      condition.where.role = { [Op.eq]: query.role };
-    }
-
-    if (query.sex) {
-      condition.where.role = { [Op.eq]: query.sex };
+      condition.where.role = query.role;
     }
 
     const { count, rows } = await User.findAndCountAll(condition);
@@ -53,6 +51,19 @@ router.get("/", async function (req, res) {
         pageSize,
       },
     });
+  } catch (error) {
+    failure(res, error);
+  }
+});
+/**
+ * 查询当前登录的用户详情(一定要放在/admin/users/:id 接口前，不然放到后面会被/:id匹配到)
+ * GET /admin/users/me
+ */
+router.get("/me", async function (req, res) {
+  try {
+    console.log("req.user", req.user);
+    const user = req.user;
+    success(res, "查询当前用户信息成功。", { user });
   } catch (error) {
     failure(res, error);
   }

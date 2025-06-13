@@ -23,10 +23,8 @@ router.get("/", async function (req, res) {
     };
 
     if (query.title) {
-      condition.where = {
-        title: {
-          [Op.like]: `%${query.title}%`,
-        },
+      condition.where.title = {
+        [Op.like]: `%${ query.title }%`
       };
     }
 
