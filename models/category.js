@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { Conflict } = require('http-errors')
 module.exports = (sequelize, DataTypes) => {
   class Category extends Model {
     /**
@@ -24,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
           async isUnique(value) {
             const category = await Category.findOne({ where: { name: value } });
             if (category) {
-              throw new Error("名称已存在，请选择其他名称。");
+              // throw new Error("名称已存在，请选择其他名称。");
+              throw new Conflict('当前分类有课程，无法删除。');
             }
           },
         },

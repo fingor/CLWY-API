@@ -3,7 +3,7 @@ const router = express.Router();
 const { Like, Course, User } = require("../models");
 const { success, failure } = require("../utils/responses");
 const { Op } = require("sequelize");
-const { NotFound, NotFoundError } = require("../utils/errors");
+const { NotFound } = require('http-errors');
 
 router.post("/", async (req, res) => {
   const userId = req.userId;
@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
   try {
     const course = await Course.findByPk(courseId);
     if (!course) {
-      throw new NotFoundError("课程不存在");
+      throw new NotFound("课程不存在");
     }
     const like = await Like.findOne({
       where: {

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { User } = require("../models");
 const { success, failure } = require("../utils/responses");
-const { BadRequestError, NotFoundError } = require("../utils/errors");
+const { BadRequest, NotFound } = require('http-errors');
 const bcrypt = require("bcryptjs");
 
 /**
@@ -53,7 +53,7 @@ async function getUser(req, showPassword = false) {
   const user = await User.findByPk(id, condition);
 
   if (!user) {
-    throw new NotFoundError(`ID: ${id}的用户未找到。`);
+    throw new NotFound(`ID: ${id}的用户未找到。`);
   }
 
   return user;

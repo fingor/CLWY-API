@@ -9,10 +9,10 @@ const jwt = require("jsonwebtoken");
 // console.log('jiami',crypto.randomBytes(32).toString('hex'));
 
 const {
-  BadRequestError,
-  UnauthorizedError,
-  NotFoundError,
-} = require("../../utils/errors");
+  BadRequest,
+  Unauthorized,
+  NotFound,
+} = require('http-errors');
 
 /**
  * 管理员登录
@@ -23,10 +23,10 @@ router.post("/sign_in", async function (req, res) {
 
   const { login, password } = req.body;
   if (!login) {
-    throw new BadRequestError("邮箱/用户名必须填写。");
+    throw new BadRequest("邮箱/用户名必须填写。");
   }
   if (!password) {
-    throw new BadRequestError("密码必须填写。");
+    throw new BadRequest("密码必须填写。");
   }
   const condition = {
     where: {
@@ -36,16 +36,16 @@ router.post("/sign_in", async function (req, res) {
   try {
     const user = await User.findOne(condition);
     if (!user) {
-      throw new NotFoundError("用户不存在，无法登录。");
+      throw new NotFound("用户不存在，无法登录。");
     }
     // 验证密码
     const isPasswordValid = bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedError("密码错误。");
+      throw new Unauthorized("密码错误。");
     }
     // 验证是否管理员
     if (user.role !== 100) {
-      throw new UnauthorizedError("您没有权限登录管理员后台。");
+      throw new Unauthorized("您没有权限登录管理员后台。");
     }
     // 生成身份验证令牌
     const token = jwt.sign(

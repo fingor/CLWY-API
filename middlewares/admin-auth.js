@@ -2,10 +2,10 @@ const express = require("express");
 const { User } = require("../models");
 const { success, failure } = require("../utils/responses");
 const {
-  NotFoundError,
-  BadRequestError,
-  UnauthorizedError,
-} = require("../utils/errors");
+  NotFound,
+  BadRequest,
+  Unauthorized,
+} = require('http-errors');
 const jwt = require("jsonwebtoken");
 
 module.exports = async (req, res, next) => {
@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
     
     const { token } = req.headers;
     if (!token) {
-      throw new UnauthorizedError("当前接口需要认证才能访问。");
+      throw new Unauthorized("当前接口需要认证才能访问。");
     }
     // 验证 token 是否正确
     const decoded = jwt.verify(token, process.env.SECRET);
@@ -25,11 +25,11 @@ module.exports = async (req, res, next) => {
     // 查询一下，当前用户
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new UnauthorizedError("用户不存在。");
+      throw new Unauthorized("用户不存在。");
     }
     // 验证当前用户是否是管理员
     if (user.role !== 100) {
-      throw new UnauthorizedError("您没有权限使用当前接口。");
+      throw new Unauthorized("您没有权限使用当前接口。");
     }
     // 如果通过验证，将 user 对象挂载到 req 上，方便后续中间件或路由使用
     req.user = user;

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Course, Category, Chapter, User } = require("../models");
 const { success, failure } = require("../utils/responses");
-const { NotFoundError } = require("../utils/errors");
+const { NotFound, BadRequest } = require('http-errors');
 
 /**
  * 查询课程列表
@@ -16,7 +16,7 @@ router.get("/", async function (req, res) {
     const offset = (currentPage - 1) * pageSize;
     if (!categoryId) {
       // 报错提示（关键点：这样不要用封装的failure函数，因为failure第二个参数是一个error对象，而这里是一个字符串，直接用throw new Error()抛出错误即可）
-      throw new Error("获取课程列表失败，分类ID不能为空。");
+      throw new BadRequest("获取课程列表失败，分类ID不能为空。");
     }
     const condition = {
       attributes: { exclude: ["CategoryId", "UserId", "content"] },
@@ -79,7 +79,7 @@ router.get("/:id", async function (req, res) {
 
     const course = await Course.findByPk(id, condition);
     if (!course) {
-      throw new NotFoundError(`ID: ${id}的课程未找到。`);
+      throw new NotFound(`ID: ${id}的课程未找到。`);
     }
 
     success(res, "查询课程成功。", { course });

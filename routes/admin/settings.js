@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Setting } = require("../../models");
-const { NotFoundError } = require('../../utils/errors');
+const { NotFound } = require('http-errors');
 const { success, failure } = require('../../utils/responses');
 
 /**
@@ -39,7 +39,7 @@ router.put("/", async function (req, res) {
 async function getSetting() {
   const setting = await Setting.findOne();
   if (!setting) {
-    throw new NotFoundError(`系统设置未找到。`);
+    throw new NotFound(`系统设置未找到。`);
   }
   return setting;
 }
