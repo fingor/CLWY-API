@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Course, Category, Chapter, User } = require("../models");
 const { success, failure } = require("../utils/responses");
-const { NotFound, BadRequest } = require('http-errors');
+const { NotFound, BadRequest } = require("http-errors");
 
 /**
  * 查询课程列表
@@ -49,32 +49,15 @@ router.get("/", async function (req, res) {
  * 查询课程详情
  * GET /courses/:id
  */
+/**
+ * 查询课程详情
+ * GET /courses/:id
+ */
 router.get("/:id", async function (req, res) {
   try {
     const { id } = req.params;
     const condition = {
       attributes: { exclude: ["CategoryId", "UserId"] },
-      include: [
-        {
-          model: Category,
-          as: "category",
-          attributes: ["id", "name"],
-        },
-        {
-          model: Chapter,
-          as: "chapter",
-          attributes: ["id", "title", "rank", "createdAt"],
-          order: [
-            ["rank", "ASC"],
-            ["id", "DESC"],
-          ],
-        },
-        {
-          model: User,
-          as: "user",
-          attributes: ["id", "username", "nickname", "avatar", "company"],
-        },
-      ],
     };
 
     const course = await Course.findByPk(id, condition);
@@ -82,10 +65,72 @@ router.get("/:id", async function (req, res) {
       throw new NotFound(`ID: ${id}的课程未找到。`);
     }
 
-    success(res, "查询课程成功。", { course });
+    const [category, user, chapters] = await Promise.all([
+      // 查询课程关联的分类
+      course.getCategory({
+        attributes: ["id", "name"],
+      }),
+      // 查询课程关联的用户
+      course.getUser({
+        attributes: ["id", "username", "nickname", "avatar", "company"],
+      }),
+      // 查询课程关联的章节
+      course.getChapters({
+        attributes: ["id", "title", "rank", "createdAt"],
+        order: [
+          ["rank", "ASC"],
+          ["id", "DESC"],
+        ],
+      }),
+    ]);
+
+    success(res, "查询课程成功。", { course, category, user, chapters });
   } catch (error) {
     failure(res, error);
   }
 });
+// router.get("/:id", async function (req, res) {
+//   try {
+//     const { id } = req.params;
+//     const condition = {
+//       attributes: { exclude: ["CategoryId", "UserId"] },
+//       include: [
+//         {
+//           model: Category,
+//           as: "category",
+//           attributes: ["id", "name"],
+//         },
+//         {
+//           model: Chapter,
+//           as: "chapters",
+//           attributes: ["id", "title", "rank", "createdAt"],
+//           //关联模型排序，这样写不会生效的，order不能放include里面， 需要在外层的order中指定
+//           // order: [
+//           //   ["rank", "ASC"],
+//           //   ["id", "DESC"],
+//           // ],
+//         },
+//         {
+//           model: User,
+//           as: "user",
+//           attributes: ["id", "username", "nickname", "avatar", "company"],
+//         },
+//       ],
+//       order: [
+//         [{ model: Chapter, as: "chapters" }, "rank", "ASC"],
+//         [{ model: Chapter, as: "chapters" }, "id", "DESC"],
+//       ],
+//     };
+
+//     const course = await Course.findByPk(id, condition);
+//     if (!course) {
+//       throw new NotFound(`ID: ${id}的课程未找到。`);
+//     }
+
+//     success(res, "查询课程成功。", { course });
+//   } catch (error) {
+//     failure(res, error);
+//   }
+// });
 
 module.exports = router;

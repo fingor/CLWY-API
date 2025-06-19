@@ -142,6 +142,7 @@ async function getCourse(req) {
  */
 function getCondition() {
   return {
+    distinct: true,
     attributes: { exclude: ["CategoryId", "UserId"] },
     include: [
       {
@@ -154,6 +155,11 @@ function getCondition() {
         as: "user",
         attributes: ["id", "username", "avatar"],
       },
+      // {
+      //   model: Chapter,
+      //   as: 'chapters',
+      //   attributes: ['id', 'title']
+      // },
     ],
   };
 }

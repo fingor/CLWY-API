@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       models.Course.belongsTo(models.Category, { as: "category" });
       models.Course.belongsTo(models.User, { as: "user" });
-      models.Course.hasMany(models.Chapter, { as: "chapter" });
+      models.Course.hasMany(models.Chapter, { as: "chapters" });
       models.Course.belongsToMany(models.User, {
         through: models.Like,
         foreignKey: "courseId",// 指定中间表 Like 中指向 Course 的外键字段名

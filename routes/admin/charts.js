@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { sequelize, User } = require("../../models");
 const { Op } = require("sequelize");
-const { NotFound } = require('http-errors');
-const { success, failure } = require('../../utils/responses');
+const { NotFound } = require("http-errors");
+const { success, failure } = require("../../utils/responses");
 
 /**
  * 统计用户性别
@@ -11,9 +11,11 @@ const { success, failure } = require('../../utils/responses');
  */
 router.get("/sex", async function (req, res) {
   try {
-    const male = await User.count({ where: { sex: 0 } });
-    const female = await User.count({ where: { sex: 1 } });
-    const unknown = await User.count({ where: { sex: 2 } });
+    const [male, female, unknown] = await Promise.all([
+      User.count({ where: { sex: 0 } }),
+      User.count({ where: { sex: 1 } }),
+      User.count({ where: { sex: 2 } }),
+    ]);
     const data = [
       { value: male, name: "男性" },
       { value: female, name: "女性" },

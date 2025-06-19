@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: "courseId",
         as: "likeCourses",
       });
+      models.User.hasMany(models.Attachment, { as: 'attachments' });
     }
   }
   User.init(
