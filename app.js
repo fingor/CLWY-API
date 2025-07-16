@@ -32,7 +32,7 @@ const adminAuthRouter = require("./routes/admin/auth");
 
 // 文件上传路由
 const uploadsRouter = require("./routes/uploads");
-const uploadsBigRouter = require("./routes/uploadsBig");
+const uploadsBigRouter = require("./routes/uploadsBig"); //大文件上传
 const adminAttachmentsRouter = require("./routes/admin/attachments");
 var app = express();
 

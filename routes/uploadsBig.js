@@ -1,16 +1,22 @@
 const express = require("express");
-const multer = require("multer");
 const router = express.Router();
-const {
-  uploadChunk,
-  mergeChunks,
-  checkChunks,
-} = require("../controllers/uploadController");
+const uploadController = require("../controllers/uploadController");
+const multerConfig = require("../config/multerConfig");
 
-const upload = multer({ dest: "temp" });
+// 初始化上传
+router.post("/init", uploadController.initUpload);
 
-router.post("/chunk", upload.single("chunk"), uploadChunk);
-router.post("/merge", mergeChunks);
-router.post("/check", checkChunks);
+// 上传分片（使用multer处理文件上传）
+router.post(
+  "/chunk",
+  multerConfig.single("chunk"),
+  uploadController.uploadChunk
+);
+
+// 完成上传
+router.post("/complete", uploadController.completeUpload);
+
+// 取消上传
+router.post("/cancel", uploadController.cancelUpload);
 
 module.exports = router;
