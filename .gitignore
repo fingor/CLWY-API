@@ -14,6 +14,3 @@ Thumbs.db
 
 # Ignore Docker data.
 /data
-
-# 忽略package-lock.json
-/package-lock.json
