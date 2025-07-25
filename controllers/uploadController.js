@@ -147,69 +147,6 @@ exports.completeUpload = async (req, res) => {
     });
   }
 };
-// exports.completeUpload = async (req, res) => {
-//   try {
-//     const { uploadId, fileHash } = req.body;
-
-//     if (!uploadId || !fileHash) {
-//       return res.status(400).json({
-//         success: false,
-//         error: "缺少必要参数",
-//       });
-//     }
-
-//     // 获取上传记录
-//     const upload = await Upload.findByPk(uploadId);
-
-//     if (!upload) {
-//       return res.status(404).json({
-//         success: false,
-//         error: "上传记录不存在",
-//       });
-//     }
-
-//     // 合并分片
-//     const filePath = await mergeFileChunks(
-//       upload.fileName,
-//       uploadId,
-//       upload.totalChunks
-//     );
-
-//     // 验证文件完整性
-//     const finalHash = await calculateFileHash(filePath);
-//     if (finalHash !== fileHash) {
-//       fs.unlinkSync(filePath);
-//       return res.status(400).json({
-//         success: false,
-//         error: "文件哈希不匹配",
-//       });
-//     }
-
-//     // 更新上传状态
-//     await upload.update({
-//       status: "completed",
-//       filePath,
-//       uploadedChunks: upload.totalChunks,
-//     });
-
-//     // 清理数据库中的分片记录
-//     await UploadChunk.destroy({ where: { uploadId } });
-
-//     res.json({
-//       success: true,
-//       url: `/uploads/completed/${encodeURIComponent(upload.fileName)}`,
-//       filePath,
-//       message: `文件 ${upload.fileName} 上传完成`,
-//     });
-//   } catch (error) {
-//     console.error("文件合并失败:", error);
-//     res.status(500).json({
-//       success: false,
-//       error: `文件合并失败: ${error.message}`,
-//     });
-//   }
-// };
-
 // 取消上传
 exports.cancelUpload = async (req, res) => {
   try {
