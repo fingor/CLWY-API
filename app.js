@@ -34,8 +34,10 @@ const adminAuthRouter = require("./routes/admin/auth");
 const uploadsRouter = require("./routes/uploads");
 const uploadsBigRouter = require("./routes/uploadsBig"); //大文件上传
 const adminAttachmentsRouter = require("./routes/admin/attachments");
-var app = express();
+// AI问答
+const aiChatRouter = require('./routes/ai/chat')
 
+var app = express();
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -68,5 +70,7 @@ app.use("/admin/auth", adminAuthRouter);
 app.use("/uploads", userAuth, uploadsRouter);
 app.use("/uploadsBig", uploadsBigRouter);
 app.use("/admin/attachments", adminAuth, adminAttachmentsRouter);
+
+app.use("/ai/chat",aiChatRouter)
 
 module.exports = app;

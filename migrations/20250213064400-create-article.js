@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Articles', {
+    await queryInterface.createTable("Articles", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,19 +14,26 @@ module.exports = {
         allowNull: false,
       },
       content: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
+      deletedAt: {
+        allowNull: true,
+        type: Sequelize.DATE,
+      },
+    });
+    await queryInterface.addIndex("Articles", {
+      fields: ["deletedAt"],
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Articles');
-  }
+    await queryInterface.dropTable("Articles");
+  },
 };

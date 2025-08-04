@@ -19,21 +19,25 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: '标题必须存在。'
+            msg: "标题必须存在。",
           },
           notEmpty: {
-            msg: '标题不能为空。'
+            msg: "标题不能为空。",
           },
           len: {
             args: [3, 45],
-            msg: '标题长度需要在3 ~ 45个字符之间。'
-          }
-        }
+            msg: "标题长度需要在3 ~ 45个字符之间。",
+          },
+        },
+      },
+      deletedAt: {
+        type: DataTypes.DATE,
       },
       content: DataTypes.TEXT,
     },
     {
       sequelize,
+      paranoid: true,
       modelName: "Article",
     }
   );

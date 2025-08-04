@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { Article } = require("../../models");
 const { Op } = require("sequelize");
-const { NotFound } = require('http-errors');
-const { success, failure } = require('../../utils/responses');
+const { NotFound } = require("http-errors");
+const { success, failure } = require("../../utils/responses");
 
 /**
  * 查询文章列表
@@ -20,11 +20,19 @@ router.get("/", async function (req, res) {
       order: [["id", "DESC"]],
       limit: pageSize,
       offset: offset,
+      where: {},
     };
-
+    // 查询被软删除的数据
+    if (query.deleted === "true") {
+      condition.paranoid = false; //除了正常数据外，还会包含被软删除的数据
+      //只查询被软删除的数据，正常数据不要
+      condition.where.deletedAt = {
+        [Op.not]: null,
+      };
+    }
     if (query.title) {
       condition.where.title = {
-        [Op.like]: `%${ query.title }%`
+        [Op.like]: `%${query.title}%`,
       };
     }
 
@@ -90,12 +98,26 @@ router.put("/:id", async function (req, res) {
  * 删除文章
  * DELETE /admin/articles/:id
  */
-router.delete("/:id", async function (req, res) {
-  try {
-    const article = await getArticle(req);
+// router.delete("/:id", async function (req, res) {
+//   try {
+//     const article = await getArticle(req);
 
-    await article.destroy();
-    success(res, "删除文章成功。");
+//     await article.destroy();
+//     success(res, "删除文章成功。");
+//   } catch (error) {
+//     failure(res, error);
+//   }
+// });
+/**
+ * 删除到回收站
+ * POST /admin/articles/delete
+ */
+router.post("/delete", async function (req, res) {
+  try {
+    const { id } = req.body;
+
+    await Article.destroy({ where: { id: id } });
+    success(res, "已删除到回收站。");
   } catch (error) {
     failure(res, error);
   }
