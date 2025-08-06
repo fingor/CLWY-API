@@ -1,15 +1,13 @@
-# 天气MCP功能说明
+# DeepSeek MCP 天气功能
 
 ## 项目结构
 
 ```
 clwy-api/
 ├── services/                    # 服务层
+│   ├── mcpService.js           # 统一的MCP服务（天气、时间、计算器）
 │   ├── chatService.js          # 聊天服务
 │   └── responseService.js      # 响应处理服务
-├── utils/                      # 工具层
-│   ├── weatherService.js       # 天气服务
-│   └── mcpTools.js            # MCP工具管理器
 ├── routes/ai/                  # 路由层
 │   └── chat.js                # 聊天路由
 └── WEATHER_MCP_SETUP.md       # 详细配置指南
@@ -25,25 +23,31 @@ clwy-api/
 
 ## 架构设计
 
-### 1. 服务层 (Services)
-- **chatService.js**: 处理聊天逻辑，包括工具调用检测和DeepSeek API调用
-- **responseService.js**: 处理响应逻辑，包括流式响应和错误处理
+### 1. 统一MCP服务 (mcpService.js)
+- **工具检测**：自动检测用户意图
+- **工具执行**：调用天气API、时间查询、计算器
+- **数据格式化**：将工具结果格式化为自然语言
+- **消息增强**：将工具结果注入到AI对话中
 
-### 2. 工具层 (Utils)
-- **weatherService.js**: 天气API服务，获取实时天气和预报数据
-- **mcpTools.js**: MCP工具管理器，检测和执行各种工具功能
+### 2. 聊天服务 (chatService.js)
+- **消息处理**：调用MCP服务处理消息
+- **API调用**：调用DeepSeek API
+- **配置验证**：验证API密钥
 
-### 3. 路由层 (Routes)
-- **chat.js**: 聊天接口路由，简洁的控制器逻辑
+### 3. 响应服务 (responseService.js)
+- **流式响应**：处理Server-Sent Events
+- **错误处理**：统一的错误响应格式
+- **参数验证**：验证请求参数
 
 ## 工作流程
 
-1. **请求验证**: 验证请求参数和配置
-2. **消息处理**: 检测是否需要工具调用
-3. **工具执行**: 执行相应的工具（天气、时间、计算器）
-4. **消息增强**: 将工具结果注入到对话中
-5. **API调用**: 调用DeepSeek API
-6. **流式响应**: 将响应流式返回给前端
+1. **用户发送消息** → 聊天路由
+2. **参数验证** → 验证请求格式
+3. **MCP处理** → 检测工具调用需求
+4. **工具执行** → 调用天气API等
+5. **消息增强** → 将结果注入对话
+6. **AI调用** → 调用DeepSeek API
+7. **流式响应** → 返回给前端
 
 ## 使用方法
 
@@ -53,8 +57,9 @@ clwy-api/
 - "上海明天会下雨吗？"
 
 ### 时间查询
+- "今天是几号？"
 - "现在几点了？"
-- "今天是什么时间？"
+- "今天是星期几？"
 
 ### 计算器
 - "计算 15 + 25"
@@ -70,8 +75,41 @@ WEATHER_API_KEY=your_weather_api_key
 
 ## 优势
 
-- **解耦设计**: 业务逻辑分离到不同的服务层
-- **易于维护**: 清晰的代码结构和职责分离
-- **易于扩展**: 可以轻松添加新的工具功能
-- **错误处理**: 完善的错误处理机制
-- **性能优化**: 减少不必要的日志输出 
+- **代码精简**：从多个文件整合为统一服务
+- **易于维护**：清晰的职责分离
+- **易于扩展**：在mcpService.js中添加新工具
+- **性能优化**：减少文件依赖和调用层级
+- **错误处理**：统一的错误处理机制
+
+## 添加新工具
+
+在 `services/mcpService.js` 中：
+
+1. **添加关键词检测**：
+```javascript
+const newKeywords = ['新工具关键词'];
+```
+
+2. **添加工具解析**：
+```javascript
+if (lowerMessage.includes('新工具关键词')) {
+  return {
+    tool: 'new_tool',
+    params: { /* 参数 */ }
+  };
+}
+```
+
+3. **添加工具执行**：
+```javascript
+case 'new_tool':
+  return await this.newTool(params);
+```
+
+4. **实现工具方法**：
+```javascript
+async newTool(params) {
+  // 工具实现
+  return result;
+}
+``` 

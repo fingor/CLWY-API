@@ -17,15 +17,11 @@ router.post("/", async (req, res) => {
       return responseService.sendErrorResponse(res, '配置错误', 'DeepSeek API配置无效');
     }
 
-    // 处理聊天消息
-    const chatResult = await chatService.processChat(validation.messages);
-    
-    if (!chatResult.success) {
-      return responseService.sendErrorResponse(res, '处理失败', '聊天消息处理失败');
-    }
+    // 处理聊天消息（包含MCP功能）
+    const messages = await chatService.processChat(validation.messages);
 
     // 调用DeepSeek API
-    const response = await chatService.callDeepSeekAPI(chatResult.messages);
+    const response = await chatService.callDeepSeekAPI(messages);
 
     // 设置响应头并处理流式响应
     responseService.setStreamHeaders(res);
