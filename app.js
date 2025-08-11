@@ -36,6 +36,8 @@ const uploadsBigRouter = require("./routes/uploadsBig"); //大文件上传
 const adminAttachmentsRouter = require("./routes/admin/attachments");
 // AI问答
 const aiChatRouter = require('./routes/ai/chat')
+// typescript练习接口
+const tsRouter = require('./routes/ts')
 
 var app = express();
 app.use(logger("dev"));
@@ -72,5 +74,6 @@ app.use("/uploadsBig", uploadsBigRouter);
 app.use("/admin/attachments", adminAuth, adminAttachmentsRouter);
 
 app.use("/ai/chat",aiChatRouter)
+app.use("/ts",tsRouter)
 
 module.exports = app;
