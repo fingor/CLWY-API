@@ -11,9 +11,6 @@ const jwt = require("jsonwebtoken");
 module.exports = async (req, res, next) => {
   try {
     // 判断token是否存在
-    // 判断 Token 是否存在
-    console.log('req.headers', req.headers);
-    
     const { token } = req.headers;
     if (!token) {
       throw new Unauthorized("当前接口需要认证才能访问。");
