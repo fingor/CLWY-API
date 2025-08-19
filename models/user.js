@@ -68,8 +68,8 @@ module.exports = (sequelize, DataTypes) => {
           }
 
           // 检查长度
-          if (value.length < 6 || value.length > 45) {
-            throw new BadRequest("密码长度必须是6 ~ 45之间。");
+          if (value.length < 5 || value.length > 45) {
+            throw new BadRequest("密码长度必须是5 ~ 45之间。");
           }
           this.setDataValue("password", bcrypt.hashSync(value, 10));
         },

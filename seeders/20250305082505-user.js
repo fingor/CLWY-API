@@ -7,7 +7,7 @@ module.exports = {
       {
         email: 'admin@clwy.cn',
         username: 'admin',
-        password: bcrypt.hashSync('aaabbbcccd', 10),
+        password: bcrypt.hashSync('admin', 10),
         nickname: '超厉害的管理员',
         sex: 2,
         role: 100,

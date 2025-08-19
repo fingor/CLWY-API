@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { Category, Course } = require("../../models");
 const { Op } = require("sequelize");
-const { NotFound, Conflict } = require('http-errors');
+const { NotFound, Conflict } = require("http-errors");
 const { success, failure } = require("../../utils/responses");
-
+const { delKey } = require("../../utils/redis");
 /**
  * 查询分类列表
  * GET /admin/categories
@@ -58,6 +58,7 @@ router.post("/", async function (req, res) {
     const body = filterBody(req);
 
     const category = await Category.create(body);
+    await clearCache();
     success(res, "创建分类成功。", { category }, 201);
   } catch (error) {
     failure(res, error);
@@ -74,6 +75,7 @@ router.put("/:id", async function (req, res) {
     const body = filterBody(req);
 
     await category.update(body);
+    await clearCache(category);
     success(res, "更新分类成功。", { category });
   } catch (error) {
     failure(res, error);
@@ -92,6 +94,7 @@ router.delete("/:id", async function (req, res) {
       throw new Conflict("该分类下有课程，无法删除。");
     }
     await category.destroy();
+    await clearCache(category);
     success(res, "删除分类成功。");
   } catch (error) {
     failure(res, error);
@@ -133,4 +136,15 @@ function filterBody(req) {
   };
 }
 
+/**
+ * 清除缓存
+ * @returns {Promise<void>}
+ */
+async function clearCache(category = null) {
+  await delKey("categories");
+
+  if (category) {
+    await delKey(`category:${category.id}`);
+  }
+}
 module.exports = router;

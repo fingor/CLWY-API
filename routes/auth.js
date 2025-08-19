@@ -2,19 +2,17 @@ const express = require("express");
 const router = express.Router();
 const { User } = require("../models");
 const { success, failure } = require("../utils/responses");
-const {
-  NotFound,
-  BadRequest,
-  Unauthorized,
-} = require('http-errors');
+const { NotFound, BadRequest, Unauthorized } = require("http-errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
+const validateCaptcha = require("../middlewares/validate-captcha");
+const { delKey } = require("../utils/redis");
 /**
  * 用户注册
  * POST /auth/sign_up
  */
-router.post("/sign_up", async function (req, res) {
+router.post("/sign_up", validateCaptcha, async function (req, res) {
   try {
     const body = {
       email: req.body.email,
@@ -27,6 +25,8 @@ router.post("/sign_up", async function (req, res) {
 
     const user = await User.create(body);
     delete user.dataValues.password; // 创建用户后不需要显示密码给前台，所以要删除密码,但这里不是查询，不能用exclude来排除掉数据，要用delete来删除
+    // 请求成功，删除验证码，防止重复使用
+    await delKey(req.body.captchaKey);
     // 返回的数据里，要从user对象的dataValues中，delete掉密码字段，这是sequelize里的固定用法。
     success(res, "创建用户成功。", { user }, 201);
   } catch (error) {

@@ -4,6 +4,7 @@ const { Course, Category, User, Chapter } = require("../../models");
 const { Op } = require("sequelize");
 const { NotFound } = require('http-errors');
 const { success, failure } = require("../../utils/responses");
+const { getKeysByPattern, delKey } = require('../../utils/redis');
 
 /**
  * 查询课程列表
@@ -82,6 +83,7 @@ router.post("/", async function (req, res) {
     // 获取当前登录的用户 ID
     body.userId = req.user.id;
     const course = await Course.create(body);
+    await clearCache();
     success(res, "创建课程成功。", { course }, 201);
   } catch (error) {
     failure(res, error);
@@ -98,6 +100,7 @@ router.put("/:id", async function (req, res) {
     const body = filterBody(req);
 
     await course.update(body);
+    await clearCache(course);
     success(res, "更新课程成功。", { course });
   } catch (error) {
     failure(res, error);
@@ -117,6 +120,7 @@ router.delete("/:id", async function (req, res) {
     }
 
     await course.destroy();
+    await clearCache(course);
     success(res, "删除课程成功。");
   } catch (error) {
     failure(res, error);
@@ -180,5 +184,14 @@ function filterBody(req) {
     content: req.body.content,
   };
 }
+async function clearCache(course = null) {
+  let keys = await getKeysByPattern('courses:*');
+  if (keys.length !== 0) {
+    await delKey(keys);
+  }
 
+  if (course) {
+    await delKey(`course:${course.id}`);
+  }
+}
 module.exports = router;

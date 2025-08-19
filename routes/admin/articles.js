@@ -4,6 +4,7 @@ const { Article } = require("../../models");
 const { Op } = require("sequelize");
 const { NotFound } = require("http-errors");
 const { success, failure } = require("../../utils/responses");
+const { getKeysByPattern, delKey } = require("../../utils/redis");
 
 /**
  * 查询文章列表
@@ -72,6 +73,7 @@ router.post("/", async function (req, res) {
     const body = filterBody(req);
 
     const article = await Article.create(body);
+    await clearCache(article);
     success(res, "创建文章成功。", { article }, 201);
   } catch (error) {
     failure(res, error);
@@ -88,6 +90,7 @@ router.put("/:id", async function (req, res) {
     const body = filterBody(req);
 
     await article.update(body);
+    await clearCache(article.id);
     success(res, "更新文章成功。", { article });
   } catch (error) {
     failure(res, error);
@@ -117,7 +120,36 @@ router.post("/delete", async function (req, res) {
     const { id } = req.body;
 
     await Article.destroy({ where: { id: id } });
+    await clearCache(id);
     success(res, "已删除到回收站。");
+  } catch (error) {
+    failure(res, error);
+  }
+});
+/**
+ * 彻底删除
+ */
+router.post("/force_delete", async function (req, res) {
+  try {
+    const { id } = req.body;
+    await Article.destroy({ where: { id: id }, force: true });
+    await clearCache(id);
+    success(res, "已彻底删除。");
+  } catch (error) {
+    failure(res, error);
+  }
+});
+
+/**
+ * 从回收站恢复
+ * POST /admin/articles/restore
+ */
+router.post("/restore", async function (req, res) {
+  try {
+    const { id } = req.body;
+    await Article.restore({ where: { id: id } });
+    await clearCache(id);
+    success(res, "已从回收站恢复。");
   } catch (error) {
     failure(res, error);
   }
@@ -148,5 +180,29 @@ function filterBody(req) {
     content: req.body.content,
   };
 }
+/**
+ * 清除缓存
+ * @returns {Promise<void>}
+ */
+/**
+ * 清除缓存
+ * @param id
+ * @returns {Promise<void>}
+ */
+async function clearCache(id = null) {
+  // 清除所有文章列表缓存
+  let keys = await getKeysByPattern("articles:*");
+  if (keys.length !== 0) {
+    await delKey(keys);
+  }
 
+  // 如果传递了id，则通过id清除文章详情缓存
+  if (id) {
+    // 如果是数组，则遍历
+    const keys = Array.isArray(id)
+      ? id.map((item) => `article:${item}`)
+      : `article:${id}`;
+    await delKey(keys);
+  }
+}
 module.exports = router;
