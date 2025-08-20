@@ -41,6 +41,8 @@ const aiChatRouter = require('./routes/ai/chat')
 const tsRouter = require('./routes/ts')
 // 验证码
 const captchaRouter = require('./routes/captcha')
+// 笔记
+const notesRouter = require('./routes/notes/notes')
 
 var app = express();
 // 使用cors允许跨域
@@ -81,5 +83,6 @@ app.use("/admin/attachments", adminAuth, adminAttachmentsRouter);
 app.use("/ai/chat", aiChatRouter);
 app.use("/ts", tsRouter);
 app.use("/captcha", captchaRouter);
+app.use("/notes", userAuth, notesRouter);
 
 module.exports = app;
