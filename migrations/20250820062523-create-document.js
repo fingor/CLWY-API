@@ -16,14 +16,14 @@ module.exports = {
       },
       directoryId: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "Directories",
           key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
-        comment: "所属目录ID",
+        comment: "所属目录ID，NULL表示根目录",
       },
       index: {
         type: Sequelize.INTEGER,

@@ -36,13 +36,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       directoryId: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
         validate: {
-          notNull: { msg: "目录ID必须填写。" },
           async isPresent(value) {
-            const directory = await sequelize.models.Directory.findByPk(value);
-            if (!directory) {
-              throw new Error(`ID为：${value} 的目录不存在。`);
+            if (value !== null && value !== undefined) {
+              const directory = await sequelize.models.Directory.findByPk(value);
+              if (!directory) {
+                throw new Error(`ID为：${value} 的目录不存在。`);
+              }
             }
           },
         },
@@ -62,9 +63,17 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Document",
       hooks: {
         beforeCreate: async (document, options) => {
+          // 构建查询条件
+          const whereCondition = {};
+          if (document.directoryId !== null && document.directoryId !== undefined) {
+            whereCondition.directoryId = document.directoryId;
+          } else {
+            whereCondition.directoryId = null;
+          }
+          
           // 获取同目录下文档的最大index值
           const maxIndex = await Document.max('index', {
-            where: { directoryId: document.directoryId },
+            where: whereCondition,
             transaction: options.transaction
           });
           document.index = (maxIndex || 0) + 1;
