@@ -4,10 +4,10 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Documents", {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       title: {
         type: Sequelize.STRING(200),
@@ -15,7 +15,7 @@ module.exports = {
         comment: "文档标题",
       },
       directoryId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
           model: "Directories",
@@ -33,7 +33,7 @@ module.exports = {
       },
       content: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: true,
         comment: "文档内容",
       },
       createdAt: {

@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const { v4: uuidv4 } = require('uuid');
+
 module.exports = (sequelize, DataTypes) => {
   class Document extends Model {
     /**
@@ -17,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Document.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+      },
       title: {
         type: DataTypes.STRING(200),
         allowNull: false,
@@ -27,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       directoryId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         validate: {
           notNull: { msg: "目录ID必须填写。" },
@@ -52,6 +60,16 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Document",
+      hooks: {
+        beforeCreate: async (document, options) => {
+          // 获取同目录下文档的最大index值
+          const maxIndex = await Document.max('index', {
+            where: { directoryId: document.directoryId },
+            transaction: options.transaction
+          });
+          document.index = (maxIndex || 0) + 1;
+        }
+      }
     }
   );
   return Document;

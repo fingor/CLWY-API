@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const { v4: uuidv4 } = require('uuid');
+
 module.exports = (sequelize, DataTypes) => {
   class Directory extends Model {
     /**
@@ -22,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Directory.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+      },
       title: {
         type: DataTypes.STRING(100),
         allowNull: false,
@@ -32,11 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       parentId: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.UUID,
         allowNull: true,
         validate: {
           async isPresent(value) {
-            if (value !== null) {
+            if (value !== null && value !== undefined) {
               const parent = await sequelize.models.Directory.findByPk(value);
               if (!parent) {
                 throw new Error(`ID为：${value} 的父目录不存在。`);
@@ -54,6 +62,24 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Directory",
+      hooks: {
+        beforeCreate: async (directory, options) => {
+          // 构建查询条件
+          const whereCondition = {};
+          if (directory.parentId !== null && directory.parentId !== undefined) {
+            whereCondition.parentId = directory.parentId;
+          } else {
+            whereCondition.parentId = null;
+          }
+          
+          // 获取同级目录的最大index值
+          const maxIndex = await Directory.max('index', {
+            where: whereCondition,
+            transaction: options.transaction
+          });
+          directory.index = (maxIndex || 0) + 1;
+        }
+      }
     }
   );
   return Directory;

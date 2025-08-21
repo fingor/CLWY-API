@@ -69,7 +69,16 @@ router.post("/directory", async (req, res) => {
     failure(res, error);
   }
 });
-
+// 获取文档内容
+router.get("/document/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const document = await Document.findByPk(id);
+    success(res, "获取文档内容成功。", { document });
+  } catch (error) {
+    failure(res, error);
+  }
+});
 // 创建文档
 router.post("/document", async (req, res) => {
   try {
