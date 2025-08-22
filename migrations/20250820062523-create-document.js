@@ -32,7 +32,7 @@ module.exports = {
         comment: "排序字段",
       },
       content: {
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT('long'),
         allowNull: true,
         comment: "文档内容",
       },

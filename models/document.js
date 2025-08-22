@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       content: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT('long'),
         allowNull: true,
       },
     },

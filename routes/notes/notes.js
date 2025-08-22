@@ -89,16 +89,16 @@ router.post("/document", async (req, res) => {
 router.post("/directoryDelete", async (req, res) => {
   try {
     const { id } = req.body;
-    
+
     // 删除目录下的所有文档
     await Document.destroy({ where: { directoryId: id } });
-    
+
     // 删除目录下的所有子目录
     await Directory.destroy({ where: { parentId: id } });
-    
+
     // 删除目录本身
     await Directory.destroy({ where: { id } });
-    
+
     success(res, "删除目录成功。");
   } catch (error) {
     failure(res, error);
@@ -144,7 +144,17 @@ router.get("/document/:id", async (req, res) => {
     failure(res, error);
   }
 });
-
+// 编辑文档内容
+router.post("/documentSave", async (req, res) => {
+  try {
+    const { id, content } = req.body;
+    await Document.update({ content }, { where: { id } });
+    success(res, "编辑文档内容成功。");
+  } catch (error) {
+    console.error("documentSave错误详情:", error);
+    failure(res, error);
+  }
+});
 // 获取根目录内容
 router.get("/root", async (req, res) => {
   try {
@@ -152,19 +162,25 @@ router.get("/root", async (req, res) => {
     const rootDirectories = await Directory.findAll({
       where: { parentId: null },
       attributes: ["id", "title", "index"],
-      order: [["index", "ASC"], ["createdAt", "ASC"]],
+      order: [
+        ["index", "ASC"],
+        ["createdAt", "ASC"],
+      ],
     });
 
     // 获取根目录下的所有文档
     const rootDocuments = await Document.findAll({
       where: { directoryId: null },
       attributes: ["id", "title", "index"],
-      order: [["index", "ASC"], ["createdAt", "ASC"]],
+      order: [
+        ["index", "ASC"],
+        ["createdAt", "ASC"],
+      ],
     });
 
-    success(res, "获取根目录内容成功。", { 
-      directories: rootDirectories, 
-      documents: rootDocuments 
+    success(res, "获取根目录内容成功。", {
+      directories: rootDirectories,
+      documents: rootDocuments,
     });
   } catch (error) {
     failure(res, error);
