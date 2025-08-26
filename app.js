@@ -3,6 +3,12 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("dotenv").config(); // 加载环境变量(注意dotenv引用的位置，一定要在自定义的两个中间件和其他路由上面。因为在这两个中间件里，也使用了环境变量)
+// 启动邮件消费者
+const { mailConsumer } = require('./utils/rabbit-mq');
+(async () => {
+  await mailConsumer();
+  console.log('邮件消费者已启动');
+})();
 // 中间件
 const adminAuth = require("./middlewares/admin-auth");
 const userAuth = require("./middlewares/user-auth");

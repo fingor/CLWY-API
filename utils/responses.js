@@ -36,7 +36,7 @@ function failure(res, error) {
   ) {
     // Token 验证错误
     statusCode = 401;
-    errors = "您提交的 token 错误或已过期。";
+    errors = "您提交的token错误或已过期。";
   } else if (error instanceof createError.HttpError) {
     // http-errors 库创建的错误
     statusCode = error.status;
