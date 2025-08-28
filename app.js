@@ -4,11 +4,11 @@ var cookieParser = require("cookie-parser");
 const logger = require("morgan");
 require("dotenv").config(); // 加载环境变量(注意dotenv引用的位置，一定要在自定义的两个中间件和其他路由上面。因为在这两个中间件里，也使用了环境变量)
 // 启动邮件消费者
-const { mailConsumer } = require('./utils/rabbit-mq');
+const { mailConsumer } = require("./utils/rabbit-mq");
 (async () => {
   await mailConsumer();
-  console.log('邮件消费者已启动');
 })();
+
 // 中间件
 const adminAuth = require("./middlewares/admin-auth");
 const userAuth = require("./middlewares/user-auth");
@@ -36,26 +36,31 @@ const adminCoursesRouter = require("./routes/admin/courses");
 const adminChaptersRouter = require("./routes/admin/chapters");
 const adminChartsRouter = require("./routes/admin/charts");
 const adminAuthRouter = require("./routes/admin/auth");
+const adminMembershipsRouter = require("./routes/admin/memberships");
 
 // 文件上传路由
 const uploadsRouter = require("./routes/uploads");
 const uploadsBigRouter = require("./routes/uploadsBig"); //大文件上传
 const adminAttachmentsRouter = require("./routes/admin/attachments");
 // AI问答
-const aiChatRouter = require('./routes/ai/chat')
+const aiChatRouter = require("./routes/ai/chat");
 // typescript练习接口
-const tsRouter = require('./routes/ts')
+const tsRouter = require("./routes/ts");
 // 验证码
-const captchaRouter = require('./routes/captcha')
+const captchaRouter = require("./routes/captcha");
 // 笔记
-const notesRouter = require('./routes/notes/notes')
+const notesRouter = require("./routes/notes/notes");
+// 日志
+const adminLogsRouter = require("./routes/admin/logs");
+//大会员
+const membershipsRouter = require("./routes/memberships");
 
 var app = express();
 // 使用cors允许跨域
 app.use(cors());
 app.use(logger("dev"));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 // app.use(cors()); // CORS 跨域配置
@@ -63,7 +68,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/categories", categoriesRouter);
 app.use("/courses", coursesRouter);
-app.use("/chapters", chaptersRouter);
+app.use("/chapters", userAuth, chaptersRouter);
 app.use("/articles", articlesRouter);
 app.use("/settings", settingsRouter);
 app.use("/search", searchRouter);
@@ -71,6 +76,7 @@ app.use("/auth", authRouter);
 app.use("/users", userAuth, usersRouter);
 app.use("/likes", userAuth, likesRouter);
 app.use("/posts", postsRouter);
+app.use("/memberships", membershipsRouter);
 
 // 后台路由
 app.use("/admin/articles", adminAuth, adminArticlesRouter);
@@ -81,6 +87,8 @@ app.use("/admin/courses", adminAuth, adminCoursesRouter);
 app.use("/admin/chapters", adminAuth, adminChaptersRouter);
 app.use("/admin/charts", adminAuth, adminChartsRouter);
 app.use("/admin/auth", adminAuthRouter);
+app.use("/admin/logs", adminAuth, adminLogsRouter);
+app.use("/admin/memberships", adminAuth, adminMembershipsRouter);
 
 app.use("/uploads", userAuth, uploadsRouter);
 app.use("/uploadsBig", uploadsBigRouter);

@@ -57,6 +57,15 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      free: {
+        type: DataTypes.BOOLEAN,
+        validate: {
+          isIn: {
+            args: [[true, false]],
+            msg: "是否免费章节的值必须是，推荐：true 不推荐：false。",
+          },
+        },
+      },
     },
     {
       sequelize,

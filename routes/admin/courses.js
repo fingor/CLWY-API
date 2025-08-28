@@ -182,6 +182,7 @@ function filterBody(req) {
     recommended: req.body.recommended,
     introductory: req.body.introductory,
     content: req.body.content,
+    free: req.body.free
   };
 }
 async function clearCache(course = null) {

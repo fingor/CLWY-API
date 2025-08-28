@@ -1,0 +1,11 @@
+{"level":"info","message":"这是一个 info 信息","service":"clwy-api"}
+{"level":"warn","message":"这是一个 warn 信息","service":"clwy-api"}
+{"level":"error","message":"这是一个 error 信息","service":"clwy-api"}
+{"level":"info","message":"这是一个 info 信息","service":"clwy-api"}
+{"level":"warn","message":"这是一个 warn 信息","service":"clwy-api"}
+{"level":"error","message":"这是一个 error 信息","service":"clwy-api"}
+{"level":"error","service":"clwy-api"}
+{"level":"error","service":"clwy-api"}
+{"level":"error","service":"clwy-api"}
+{"level":"error","service":"clwy-api"}
+{"level":"error","message":"这是一个错误","service":"clwy-api","stack":"Error: 这是一个错误\n    at D:\\Projects\\node-project\\clwy-api\\routes\\index.js:17:11\n    at Layer.handle [as handle_request] (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\route.js:137:13)\n    at Route.dispatch (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\route.js:112:3)\n    at Layer.handle [as handle_request] (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\index.js:281:22\n    at Function.process_params (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\index.js:335:12)\n    at next (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\index.js:275:10)\n    at Function.handle (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\index.js:174:3)\n    at router (D:\\Projects\\node-project\\clwy-api\\node_modules\\express\\lib\\router\\index.js:47:12)"}

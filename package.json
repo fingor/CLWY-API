@@ -29,7 +29,9 @@
     "redis": "^5.8.1",
     "sequelize": "^6.37.5",
     "svg-captcha": "^1.4.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0",
+    "winston-mysql": "^1.1.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: "courseId",
         as: "likeCourses",
       });
-      models.User.hasMany(models.Attachment, { as: 'attachments' });
+      models.User.hasMany(models.Attachment, { as: "attachments" });
     }
   }
   User.init(
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         //   notNull: { msg: '密码必须填写。' },
         //   notEmpty: { msg: '密码不能为空。' },
         //   len: { args: [6, 45], msg: '密码长度必须是6 ~ 45之间。' }
-        // }, 
+        // },
         set(value) {
           // 检查是否为空
           if (!value) {
@@ -115,6 +115,7 @@ module.exports = (sequelize, DataTypes) => {
           isUrl: { msg: "图片地址不正确。" },
         },
       },
+      membershipExpiredAt: DataTypes.DATE,
     },
     {
       sequelize,

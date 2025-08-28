@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const multer = require("multer");
+const logger = require("./logger");
 
 /**
  * 请求成功
@@ -51,6 +52,9 @@ function failure(res, error) {
       statusCode = 400;
       errors = error.message;
     }
+  } else {
+    // 其他未知错误
+    logger.error("服务器错误：", error);
   }
 
   res.status(statusCode).json({

@@ -2,36 +2,32 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Chapters", {
+    await queryInterface.createTable("Memberships", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER.UNSIGNED,
       },
-      courseId: {
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      durationMonths: {
         allowNull: false,
         type: Sequelize.INTEGER.UNSIGNED,
       },
-      title: {
+      price: {
         allowNull: false,
-        type: Sequelize.STRING,
-      },
-      content: {
-        type: Sequelize.TEXT,
-      },
-      video: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10, 2).UNSIGNED,
       },
       rank: {
         allowNull: false,
         defaultValue: 1,
         type: Sequelize.INTEGER.UNSIGNED,
       },
-      free: {
-        allowNull: false,
-        defaultValue: true,
-        type: Sequelize.BOOLEAN,
+      description: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -42,14 +38,8 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
-    await queryInterface.addIndex("Chapters", {
-      fields: ["courseId"],
-    });
-    await queryInterface.addIndex("Chapters", {
-      fields: ["free"],
-    });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Chapters");
+    await queryInterface.dropTable("Memberships");
   },
 };

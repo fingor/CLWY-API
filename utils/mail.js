@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-
+const logger = require("./logger");
 /**
  * 发件箱配置
  */
@@ -20,12 +20,16 @@ const transporter = nodemailer.createTransport({
  * @returns {Promise<void>}
  */
 const sendMail = async (email, subject, html) => {
-  await transporter.sendMail({
-    from: process.env.MAILER_USER,
-    to: email,
-    subject,
-    html,
-  });
+  try {
+    await transporter.sendMail({
+      from: process.env.MAILER_USER,
+      to: email,
+      subject,
+      html,
+    });
+  } catch (error) {
+    logger.error("发送邮件失败：", error);
+  }
 };
 
 module.exports = sendMail;
