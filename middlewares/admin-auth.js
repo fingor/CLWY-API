@@ -2,9 +2,8 @@ const express = require("express");
 const { User } = require("../models");
 const { success, failure } = require("../utils/responses");
 const {
-  NotFound,
-  BadRequest,
   Unauthorized,
+  Forbidden
 } = require('http-errors');
 const jwt = require("jsonwebtoken");
 
@@ -26,7 +25,7 @@ module.exports = async (req, res, next) => {
     }
     // 验证当前用户是否是管理员
     if (user.role !== 100) {
-      throw new Unauthorized("您没有权限使用当前接口。");
+      throw new Forbidden("您没有权限使用当前接口。");
     }
     // 如果通过验证，将 user 对象挂载到 req 上，方便后续中间件或路由使用
     req.user = user;
