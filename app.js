@@ -26,6 +26,7 @@ const authRouter = require("./routes/auth");
 const usersRouter = require("./routes/users");
 const likesRouter = require("./routes/likes");
 const postsRouter = require("./routes/posts");
+const ordersRouter = require('./routes/orders');
 
 // 后台路由文件
 const adminArticlesRouter = require("./routes/admin/articles.js");
@@ -37,6 +38,9 @@ const adminChaptersRouter = require("./routes/admin/chapters");
 const adminChartsRouter = require("./routes/admin/charts");
 const adminAuthRouter = require("./routes/admin/auth");
 const adminMembershipsRouter = require("./routes/admin/memberships");
+const adminOrdersRouter = require('./routes/admin/orders');
+// 支付宝相关路由
+const alipayRouter = require('./routes/alipay');
 
 // 文件上传路由
 const uploadsRouter = require("./routes/uploads");
@@ -77,6 +81,8 @@ app.use("/users", userAuth, usersRouter);
 app.use("/likes", userAuth, likesRouter);
 app.use("/posts", postsRouter);
 app.use("/memberships", membershipsRouter);
+app.use("/orders", userAuth, ordersRouter);
+app.use("/alipay", alipayRouter);
 
 // 后台路由
 app.use("/admin/articles", adminAuth, adminArticlesRouter);
@@ -89,6 +95,7 @@ app.use("/admin/charts", adminAuth, adminChartsRouter);
 app.use("/admin/auth", adminAuthRouter);
 app.use("/admin/logs", adminAuth, adminLogsRouter);
 app.use("/admin/memberships", adminAuth, adminMembershipsRouter);
+app.use("/admin/orders", adminAuth, adminOrdersRouter);
 
 app.use("/uploads", userAuth, uploadsRouter);
 app.use("/uploadsBig", uploadsBigRouter);

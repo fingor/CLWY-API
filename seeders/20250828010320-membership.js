@@ -1,26 +1,45 @@
 "use strict";
+const { v4: uuidv4 } = require("uuid");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
-      "Memberships",
+      "Orders",
       [
         {
-          name: "长乐未央大会员（月付）",
-          durationMonths: 1,
-          price: 10,
-          rank: 1,
-          description: "超值之选！",
+          outTradeNo: uuidv4().replace(/-/g, ""),
+          userId: 2,
+          subject: "长乐未央大会员（月付）",
+          totalAmount: 10,
+          paymentMethod: 0,
+          membershipMonths: 1,
+          status: 2,
+          paidAt: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: "长乐未央大会员（年付）",
-          durationMonths: 12,
-          price: 100,
-          rank: 2,
-          description: '已优惠 <span class="red"><strong>20元</strong></span>',
+          outTradeNo: uuidv4().replace(/-/g, ""),
+          userId: 2,
+          subject: "长乐未央大会员（年付）",
+          totalAmount: 100,
+          membershipMonths: 12,
+          paymentMethod: 1,
+          status: 0,
+          paidAt: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          outTradeNo: uuidv4().replace(/-/g, ""),
+          userId: 5,
+          subject: "长乐未央大会员（年付）",
+          totalAmount: 100,
+          membershipMonths: 12,
+          paymentMethod: 0,
+          status: 1,
+          paidAt: new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -30,6 +49,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Memberships", null, {});
+    await queryInterface.bulkDelete("Orders", null, {});
   },
 };

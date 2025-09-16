@@ -12,7 +12,6 @@ const { NotFound, Forbidden } = require("http-errors");
 router.get("/:id", async function (req, res) {
   try {
     const { id } = req.params;
-    console.log(123456)
     // 查询章节
     let chapter = await getKey(`chapter:${id}`);
     if (!chapter) {
